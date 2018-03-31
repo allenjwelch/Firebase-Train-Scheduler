@@ -25,13 +25,7 @@ $(document).ready(function() {
     var trainTime = $('#trainTime').val().trim(); 
     var freq = $('#freq').val().trim(); 
     console.log(train, destination, trainTime, freq); 
-    
-    TODO: 
-    
-    
-    
-
-
+     
     // create new array for new train info
     var newTrain = {
       train: train,
@@ -59,40 +53,67 @@ $(document).ready(function() {
     console.log(trainTime);
 
     // Next Arrival & Minutes Away logic
-    var format = "HH:mm";  // HH:mm
-    var trainFreq = parseInt(freq * 60); 
 
-    var currentTime = parseInt(moment().format('X')); 
-      console.log('currentTime ' + currentTime); 
+    var firstTimeConverted = moment(trainTime, "HH:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
 
-    var trainTime = parseInt(moment(trainTime, format).format('X')); 
-      console.log('trainTime ' + trainTime); 
+    // Current Time
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
-    var secondsInDay = 86400; 
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
 
-    var nextArrival; 
-    var minAway;
+    // Time apart (remainder)
+    var tRemainder = diffTime % freq;
+    console.log(tRemainder);
 
-    var nextTime = parseInt(moment(trainTime, 'X').add(trainFreq, 'm').format('X')); 
-      console.log('nextTime ' + nextTime); 
+    // Minute Until Train
+    var tMinutesTillTrain = freq - tRemainder;
+    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
 
-    var schedule = []; 
-    var nextDay = trainTime + secondsInDay; 
-      console.log('nextDay ' + nextDay); 
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
-    for (i = trainTime; i <= nextDay ; i + trainFreq ) {
-      schedule.push(moment(i, 'X').format(format)); 
-      i = i + trainFreq; 
-      var j = i + trainFreq;        
-      if (currentTime > i && currentTime < j) {
-        nextArrival = moment(j, 'X').format('h:mm A'); 
-        console.log('currentTime ' + moment(currentTime, 'X').format('h:mm A')); 
-        console.log('nextArrival ' + moment(nextArrival, 'X').format('h:mm A')); 
-        console.log(schedule); 
-        var minAway = moment(nextArrival, 'h:mm A').diff(moment(currentTime, 'X'), 'minutes'); // min
-        console.log(minAway);
-      }
-    }
+    // =======================================================================================
+
+    // var format = "HH:mm";  // HH:mm
+    // var trainFreq = parseInt(freq * 60); 
+
+    // var currentTime = parseInt(moment().format('X')); 
+    //   console.log('currentTime ' + currentTime); 
+
+    // var trainTime = parseInt(moment(trainTime, format).format('X')); 
+    //   console.log('trainTime ' + trainTime); 
+
+    // var secondsInDay = 86400; 
+
+    // var nextArrival; 
+    // var minAway;
+
+    // // var nextTime = parseInt(moment(trainTime, 'X').add(trainFreq, 'm').format('X')); 
+    // //   console.log('nextTime ' + nextTime); 
+
+    // var schedule = []; 
+    // var nextDay = trainTime + secondsInDay; 
+    //   console.log('nextDay ' + nextDay); 
+
+    // for (i = trainTime; i <= nextDay ; i + trainFreq ) {
+    //   schedule.push(moment(i, 'X').format(format)); 
+    //   i = i + trainFreq; 
+    //   var j = i + trainFreq;        
+    //   if (currentTime > i && currentTime < j) {
+    //     nextArrival = moment(j, 'X').format('h:mm A'); 
+    //     console.log('currentTime ' + moment(currentTime, 'X').format('h:mm A')); 
+    //     console.log('nextArrival ' + moment(nextArrival, 'X').format('h:mm A')); 
+    //     console.log(schedule); 
+    //     var minAway = moment(nextArrival, 'h:mm A').diff(moment(currentTime, 'X'), 'minutes'); // min
+    //     console.log(minAway);
+    //   }
+    // }
+    // =======================================================================================
 
 
 
@@ -103,8 +124,8 @@ $(document).ready(function() {
     var destinationTd = $('<td class="destination">').text(destination);
     // var trainTimeTd = $('<td class="trainTime">').text(trainTime);
     var freqTd = $('<td class="freq">').text(freq);
-    var nextArrivalTd = $('<td class="nextArrival">').text(nextArrival);
-    var minAwayTd = $('<td>').text(minAway);
+    var nextArrivalTd = $('<td class="nextArrival">').text(moment(nextTrain).format("hh:mm"));
+    var minAwayTd = $('<td>').text(tMinutesTillTrain);
 
     // add train info from DB to HTML
     tRow.append(trainTd, destinationTd, freqTd, nextArrivalTd, minAwayTd);
