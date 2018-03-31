@@ -17,9 +17,12 @@ $(document).ready(function() {
   var trainTime = ''; 
   var freq = ''; 
 
+  var audio = new Audio('../Firebase-Train-Scheduler/assets/imgs/horn.mp3'); 
+
 
   // Button to add trains to DB
   $('button').on('click', function() {
+    audio.play(); 
     var train = $('#train').val().trim(); 
     var destination = $('#destination').val().trim(); 
     var trainTime = $('#trainTime').val().trim(); 
